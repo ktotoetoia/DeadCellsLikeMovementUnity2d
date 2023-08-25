@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 public class MovementStateMachine
 {
@@ -13,7 +15,7 @@ public class MovementStateMachine
         }
         set
         {
-            if (!_currentMovement?.CanReplaceWith(value)??false)
+            if(!_currentMovement?.CanReplaceWith(value) ?? false)
             {
                 return;
             }
@@ -25,6 +27,8 @@ public class MovementStateMachine
             value.OnEnter();
         }
     }
+    
+    public List<StateTransition> AnyStateTransitions { get; set; } = new List<StateTransition>();
 
     public MovementStateMachine(MovementBaseState mainMovement)
     {
@@ -33,7 +37,17 @@ public class MovementStateMachine
 
     public void Update()
     {
+        TryDoTransition(_currentMovement?.GetAvailableTransition());
+        TryDoTransition(AnyStateTransitions.FirstOrDefault(x => x.CanDoTransition));
         GetStateToUpdate(x => x.OnUpdate());
+    }
+
+    private void TryDoTransition(StateTransition transition)
+    {
+        if(transition != default)
+        {
+            CurrentMovement = transition.To;
+        }
     }
 
     public void FixedUpdate()
@@ -48,9 +62,14 @@ public class MovementStateMachine
             stateAction(MainMovement);
         }
 
-        if (CurrentMovement != null)
+        if (CurrentMovement != default)
         {
             stateAction(CurrentMovement);
         }
+    }
+
+    public void AddAnyStateTransition(MovementBaseState to, Func<bool> condition)
+    {
+        AnyStateTransitions.Add(new StateTransition(default, to, condition));
     }
 }

@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System.Linq;
+
 
 public class Roller : MovementComponent, ICanRoll
 {
@@ -9,6 +11,7 @@ public class Roller : MovementComponent, ICanRoll
     private ICanMove _canMove;
     private float _currentRollTime;
     private float _rollDirection;
+    private bool _firstFrame;
 
     public bool IsRolling { get; set; }
     public bool CanStopRolling { get { return _colliderResizer.CanResizeToNormal; } }
@@ -26,8 +29,9 @@ public class Roller : MovementComponent, ICanRoll
         if (!IsRolling)
         {
             _rollDirection = direction;
-            IsRolling = true;
             _currentRollTime = 0;
+            IsRolling = true;
+            _firstFrame = true;
         }
     }
 
@@ -35,6 +39,14 @@ public class Roller : MovementComponent, ICanRoll
     {
         if (IsRolling)
         {
+            if (_firstFrame)
+            {
+                _colliderResizer.Resize = true;
+                _firstFrame = false;
+                
+                return;
+            }
+
             PerformRoll();
         }
     }
@@ -45,15 +57,26 @@ public class Roller : MovementComponent, ICanRoll
 
         if (_currentRollTime < _rollingTime || !CanStopRolling)
         {
+            UpdateDirection();
+
             float speed = _rollingSpeedCurve.Evaluate(_currentRollTime / _rollingTime) * _rollingSpeed;
 
-            _colliderResizer.Resize = true;
             _canMove.MoveWithCustomSpeed(_rollDirection, speed);
 
             return;
         }
 
         StopRoll();
+    }
+
+    private void UpdateDirection()
+    {
+        Vector2 normal = _slider.AllContacts.Select(x => x.normal).FirstOrDefault(x => !_slider.IsValidNormal(x));
+
+        if (normal != default)
+        {
+            _rollDirection = normal.x.CompareTo(0);
+        }
     }
 
     public void StopRoll()

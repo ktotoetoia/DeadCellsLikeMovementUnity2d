@@ -5,8 +5,8 @@ using UnityEngine;
 public class Crouching : MovementComponent, ICanCrouch
 {
     [SerializeField] private float _fallSpeed;
-    private bool _isCoroutineRunning;
     private CapsuleColliderResizer _colliderResizer;
+    private bool _isCoroutineRunning;
 
     public bool IsCrouching { get; set; }
     public bool IsFalling { get; set; }

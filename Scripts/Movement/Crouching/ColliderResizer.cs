@@ -10,9 +10,31 @@ public class CapsuleColliderResizer : MonoBehaviour
     private Vector2 _modifiedSize;
     private Vector2 _defaultOffset;
     private Vector2 _modifiedOffset;
+    private bool resize;
 
     public bool CanResizeToNormal { get; private set; }
-    public bool Resize { get; set; }
+    public bool Resize
+    {
+        get
+        {
+            return resize;
+        }
+        set
+        {
+            resize = value;
+         
+            if (resize)
+            {
+                _collider.size = _modifiedSize;
+                _collider.offset = _modifiedOffset;
+            }
+            else if (CanResizeToNormal)
+            {
+                _collider.size = _defaultSize;
+                _collider.offset = _defaultOffset;
+            }
+        }
+    }
 
     protected void Start()
     {
@@ -24,22 +46,8 @@ public class CapsuleColliderResizer : MonoBehaviour
         _modifiedOffset = _defaultOffset + new Vector2(0, -(_colliderMin.y * _crouchingMultiplier - _colliderMin.y));
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        CanResizeToNormal = !Physics2D.OverlapCapsule(transform.position + (Vector3)_defaultOffset, _defaultSize - Vector2.one * 0.05f, _collider.direction, 0,_groundLayer);
-
-        if (Resize)
-        {
-            _collider.size = _modifiedSize;
-            _collider.offset = _modifiedOffset;
-
-            return;
-        }
-
-        if (CanResizeToNormal)
-        {
-            _collider.size = _defaultSize;
-            _collider.offset = _defaultOffset;
-        }
+        CanResizeToNormal = !Physics2D.OverlapCapsule(transform.position + (Vector3)_defaultOffset, _defaultSize * 0.95f, _collider.direction, 0, _groundLayer);
     }
 }

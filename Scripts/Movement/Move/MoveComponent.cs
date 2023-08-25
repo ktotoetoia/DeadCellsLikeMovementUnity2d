@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(SurfaceSlider))]
+[RequireComponent(typeof(CapsuleSurfaceSlider))]
 public class MovementComponent : MonoBehaviour
 {
     protected Rigidbody2D _rigidbody;
