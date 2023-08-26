@@ -1,3 +1,5 @@
+using System;
+
 public interface ICanMove
 {
     void Move(float direction);
@@ -6,6 +8,7 @@ public interface ICanMove
 
 public interface ICanJump
 {
+    bool CanJump();
     void Jump();
 }
 

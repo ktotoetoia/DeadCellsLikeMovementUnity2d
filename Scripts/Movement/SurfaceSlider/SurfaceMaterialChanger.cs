@@ -12,32 +12,12 @@ public class SurfaceMaterialChanger : MonoBehaviour
     {
         _collider = GetComponent<Collider2D>();
         _slider = GetComponent<ISurfaceSlider>();
-    }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        UpdatePhysicsMaterial();
-    }
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        UpdatePhysicsMaterial();
-    }
-
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        UpdatePhysicsMaterial();
+        _slider.OnNormalChanged += x => UpdatePhysicsMaterial();
     }
 
     private void UpdatePhysicsMaterial()
     {
-        if (!_slider.IsOnSurface)
-        {
-            _collider.sharedMaterial = _inAirMaterial;
-
-            return;
-        }
-
-        _collider.sharedMaterial = _onSurfaceMaterial;
+        _collider.sharedMaterial = _slider.IsOnSurface ? _onSurfaceMaterial : _inAirMaterial;
     }
 }

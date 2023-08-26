@@ -6,14 +6,14 @@ public class SurfaceMovement : MovementComponent, ICanMove
 
     public void Move(float direction)
     {
-        MoveWithCustomSpeed(direction,_speed);
+        MoveWithCustomSpeed(direction, _speed);
     }
 
-    public void MoveWithCustomSpeed(float direction,float speed)
+    public void MoveWithCustomSpeed(float direction, float speed)
     {
         if (_slider.IsOnSurface)
         {
-            SurfaceMove(direction,speed);
+            SurfaceMove(direction, speed);
 
             return;
         }

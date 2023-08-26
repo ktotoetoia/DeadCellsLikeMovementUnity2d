@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Linq;
 
-
 public class Roller : MovementComponent, ICanRoll
 {
     [SerializeField] private AnimationCurve _rollingSpeedCurve;
@@ -73,7 +72,7 @@ public class Roller : MovementComponent, ICanRoll
     {
         Vector2 normal = _slider.AllContacts.Select(x => x.normal).FirstOrDefault(x => !_slider.IsValidNormal(x));
 
-        if (normal != default)
+        if (normal != default && !_colliderResizer.CanResizeToNormal)
         {
             _rollDirection = normal.x.CompareTo(0);
         }

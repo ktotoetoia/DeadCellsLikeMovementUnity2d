@@ -6,9 +6,13 @@ public class VelocityJump : MovementComponent, ICanJump
 
     public void Jump()
     {
-        if (_slider.IsOnSurface)
-        {
-            _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, _jumpForce);
-        }
+        _slider.ResetNormal();
+
+        _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, _jumpForce);
+    }
+
+    public bool CanJump()
+    {
+        return _slider.IsOnSurface;
     }
 }

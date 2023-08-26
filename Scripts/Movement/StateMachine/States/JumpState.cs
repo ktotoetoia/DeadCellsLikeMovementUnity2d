@@ -15,10 +15,16 @@
 
     public override void OnFixedUpdate()
     {
-        if (!_jumped)
+        if (_jumped)
+        {
+            return;
+        }
+
+        if (_canJump.CanJump())
         {
             _canJump.Jump();
-            _jumped = true;
         }
+
+        _jumped = true;
     }
 }

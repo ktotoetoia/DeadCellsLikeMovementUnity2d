@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class MovementInput : MonoBehaviour
+public class MovementStateMachineInstantiator : MonoBehaviour
 {
     private MovementStateMachine _stateMachine;
     private MovementBaseState _mainMoveState;
