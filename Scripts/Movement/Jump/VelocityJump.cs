@@ -4,6 +4,18 @@ public class VelocityJump : MovementComponent, ICanJump
 {
     [SerializeField] private float _jumpForce;
 
+    public bool TryJump()
+    {
+        bool jumped = CanJump();
+
+        if (jumped)
+        {
+            Jump();
+        }
+
+        return jumped;
+    }
+
     public void Jump()
     {
         _slider.ResetNormal();

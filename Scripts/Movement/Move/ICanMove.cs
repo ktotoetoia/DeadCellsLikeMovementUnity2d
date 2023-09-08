@@ -10,6 +10,7 @@ public interface ICanJump
 {
     bool CanJump();
     void Jump();
+    bool TryJump();
 }
 
 public interface ICanCrouch

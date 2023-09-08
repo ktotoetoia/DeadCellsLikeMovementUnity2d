@@ -19,7 +19,7 @@ public class CapsuleSurfaceSlider : MonoBehaviour, ISurfaceSlider
         {
             return _normal;
         }
-        set
+        set 
         {
             if(_normal != value)
             {
@@ -29,7 +29,6 @@ public class CapsuleSurfaceSlider : MonoBehaviour, ISurfaceSlider
             }
         }
     }
-
     public List<ContactPoint2D> AllContacts { get; private set; } = new List<ContactPoint2D>();
     public bool IsOnSurface { get { return Normal != default; } }
 
@@ -43,6 +42,21 @@ public class CapsuleSurfaceSlider : MonoBehaviour, ISurfaceSlider
         OnCollisionChanged();
     }
 
+    private void OnCollisionExit2D()
+    {
+        OnCollisionChanged();
+    }
+    
+    private void OnCollisionStay2D()
+    {
+        OnCollisionChanged();
+    }
+
+    private void OnCollisionEnter2D()
+    {
+        OnCollisionChanged();
+    }
+
     private void OnCollisionChanged()
     {
         _collider.GetContacts(AllContacts);
@@ -51,27 +65,34 @@ public class CapsuleSurfaceSlider : MonoBehaviour, ISurfaceSlider
 
     private void UpdateNormal()
     {
-        float radius = _collider.size.x/2;
-        Vector2 origin = new Vector3(_collider.bounds.center.x, _collider.bounds.min.y + radius);
-
         if (IsOnSurface)
         {
-            IEnumerable<RaycastHit2D> hits = Physics2D
-                .CircleCastAll(origin, radius, Vector2.down, _castDistance, _groundLayer)
-                .Where(x => x.point.y < origin.y);
-
-            Normal = GetBestNormal( hits.Select(x => x.normal));
-
-            Debug.DrawLine(
-                new Vector2(_collider.bounds.center.x, _collider.bounds.min.y), 
-                new Vector2(_collider.bounds.center.x, _collider.bounds.min.y)+ Vector2.down);
+            AtSurfaceCheck();
 
             return;
         }
 
-        Normal = GetBestNormal(AllContacts.Where(x => 
-        x.point.x >_collider.bounds.min.x + _boundsNormalDetectionOffset &&
-        x.point.x < _collider.bounds.max.x - _boundsNormalDetectionOffset).Select(x => x.normal));
+        NotAtSurfaceCheck();
+    }
+
+    private void AtSurfaceCheck()
+    {
+        float radius = _collider.size.x/2;
+        Vector2 origin = new Vector3(_collider.bounds.center.x, _collider.bounds.min.y + radius);
+
+
+        IEnumerable<RaycastHit2D> hits = Physics2D
+            .CircleCastAll(origin, radius, Vector2.down, _castDistance, _groundLayer)
+            .Where(x => x.point.y < origin.y);
+
+        Normal = GetBestNormal(hits.Select(x => x.normal));
+    }
+
+    private void NotAtSurfaceCheck()
+    {
+        Normal = GetBestNormal(AllContacts.Where(x =>
+    x.point.x > _collider.bounds.min.x + _boundsNormalDetectionOffset &&
+    x.point.x < _collider.bounds.max.x - _boundsNormalDetectionOffset).Select(x => x.normal));
     }
 
     private Vector2 GetBestNormal(IEnumerable<Vector2> normals)

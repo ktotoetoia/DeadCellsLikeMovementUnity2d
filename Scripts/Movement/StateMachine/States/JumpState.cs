@@ -10,7 +10,7 @@
 
     public override void OnEnter()
     {
-        _jumped = false;
+        _jumped = !_canJump.CanJump();
     }
 
     public override void OnFixedUpdate()
@@ -20,13 +20,6 @@
             return;
         }
 
-        if (_canJump.CanJump())
-        {
-            _canJump.Jump();
-
-            return;
-        }
-
-        _jumped = true;
+        _jumped = _canJump.TryJump();
     }
 }
