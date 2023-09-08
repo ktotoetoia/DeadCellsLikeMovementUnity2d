@@ -23,6 +23,8 @@
         if (_canJump.CanJump())
         {
             _canJump.Jump();
+
+            return;
         }
 
         _jumped = true;

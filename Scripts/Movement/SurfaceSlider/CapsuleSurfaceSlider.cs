@@ -6,9 +6,9 @@ public class CapsuleSurfaceSlider : MonoBehaviour, ISurfaceSlider
 {
     public event System.Action<Vector2> OnNormalChanged;
 
+    [SerializeField] private LayerMask _groundLayer = 1 << 6;
     [SerializeField] private float _maxNormalX = 0.8f;
     [SerializeField] private float _castDistance = 0.1f;
-    [SerializeField] private LayerMask _groundLayer = 1 << 6;
     [SerializeField] private float _boundsNormalDetectionOffset;
     private CapsuleCollider2D _collider;
     private Vector2 _normal;
@@ -30,8 +30,8 @@ public class CapsuleSurfaceSlider : MonoBehaviour, ISurfaceSlider
         }
     }
 
-    public bool IsOnSurface { get { return Normal != default; } }
     public List<ContactPoint2D> AllContacts { get; private set; } = new List<ContactPoint2D>();
+    public bool IsOnSurface { get { return Normal != default; } }
 
     private void Start()
     {
@@ -39,21 +39,6 @@ public class CapsuleSurfaceSlider : MonoBehaviour, ISurfaceSlider
     }
 
     private void FixedUpdate()
-    {
-        OnCollisionChanged();
-    }
-
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        OnCollisionChanged();
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        OnCollisionChanged();
-    }
-
-    private void OnCollisionExit2D(Collision2D collision)
     {
         OnCollisionChanged();
     }
@@ -71,10 +56,15 @@ public class CapsuleSurfaceSlider : MonoBehaviour, ISurfaceSlider
 
         if (IsOnSurface)
         {
-            IEnumerable<RaycastHit2D> hits = Physics2D.CircleCastAll(origin, radius, Vector2.down, _castDistance, _groundLayer)
+            IEnumerable<RaycastHit2D> hits = Physics2D
+                .CircleCastAll(origin, radius, Vector2.down, _castDistance, _groundLayer)
                 .Where(x => x.point.y < origin.y);
 
             Normal = GetBestNormal( hits.Select(x => x.normal));
+
+            Debug.DrawLine(
+                new Vector2(_collider.bounds.center.x, _collider.bounds.min.y), 
+                new Vector2(_collider.bounds.center.x, _collider.bounds.min.y)+ Vector2.down);
 
             return;
         }
