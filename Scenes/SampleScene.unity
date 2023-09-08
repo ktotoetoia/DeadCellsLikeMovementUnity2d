@@ -334,11 +334,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26d9b6f173e6dbc4ebe3390a618eadf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxNormalX: 1
-  _castDistance: 0.1
   _groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  _maxNormalX: 1
+  _onSurfaceCastDistance: 0.1
   _boundsNormalDetectionOffset: 0.05
 --- !u!50 &522374627
 Rigidbody2D:

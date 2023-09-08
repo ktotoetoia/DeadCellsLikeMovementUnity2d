@@ -24,9 +24,9 @@ public class MovementStateMachineInstantiator : MonoBehaviour
 
     private void Update()
     {
-        float a = Input.GetAxisRaw(Axis.Horizontal);
+        float rawDirection = Input.GetAxisRaw(Axis.Horizontal);
 
-        _horizontal = a != 0 ? a : _horizontal;
+        _horizontal = rawDirection != 0 ? rawDirection : _horizontal;
 
         _stateMachine.Update();
     }
@@ -34,17 +34,5 @@ public class MovementStateMachineInstantiator : MonoBehaviour
     private void FixedUpdate()
     {
         _stateMachine.FixedUpdate();
-    }
-
-    private void OnGUI()
-    {
-        GUIStyle style = new GUIStyle()
-        {
-            fontSize = 50,
-        };
-
-        style.normal.textColor = Color.white;
-
-        GUI.Label(new Rect(Vector2.zero,Vector2.one* 100),new GUIContent(_stateMachine.CurrentMovement?.ToString()),style);
     }
 }

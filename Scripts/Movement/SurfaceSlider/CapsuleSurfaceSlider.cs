@@ -8,20 +8,21 @@ public class CapsuleSurfaceSlider : MonoBehaviour, ISurfaceSlider
 
     [SerializeField] private LayerMask _groundLayer = 1 << 6;
     [SerializeField] private float _maxNormalX = 0.8f;
-    [SerializeField] private float _castDistance = 0.1f;
+    [SerializeField] private float _onSurfaceCastDistance = 0.1f;
     [SerializeField] private float _boundsNormalDetectionOffset;
     private CapsuleCollider2D _collider;
     private Vector2 _normal;
 
+    public List<ContactPoint2D> AllContacts { get; private set; } = new List<ContactPoint2D>();
     public Vector2 Normal
     {
         get
         {
             return _normal;
         }
-        set 
+        set
         {
-            if(_normal != value)
+            if (_normal != value)
             {
                 _normal = value;
 
@@ -29,7 +30,6 @@ public class CapsuleSurfaceSlider : MonoBehaviour, ISurfaceSlider
             }
         }
     }
-    public List<ContactPoint2D> AllContacts { get; private set; } = new List<ContactPoint2D>();
     public bool IsOnSurface { get { return Normal != default; } }
 
     private void Start()
@@ -38,26 +38,6 @@ public class CapsuleSurfaceSlider : MonoBehaviour, ISurfaceSlider
     }
 
     private void FixedUpdate()
-    {
-        OnCollisionChanged();
-    }
-
-    private void OnCollisionExit2D()
-    {
-        OnCollisionChanged();
-    }
-    
-    private void OnCollisionStay2D()
-    {
-        OnCollisionChanged();
-    }
-
-    private void OnCollisionEnter2D()
-    {
-        OnCollisionChanged();
-    }
-
-    private void OnCollisionChanged()
     {
         _collider.GetContacts(AllContacts);
         UpdateNormal();
@@ -79,10 +59,8 @@ public class CapsuleSurfaceSlider : MonoBehaviour, ISurfaceSlider
     {
         float radius = _collider.size.x/2;
         Vector2 origin = new Vector3(_collider.bounds.center.x, _collider.bounds.min.y + radius);
-
-
         IEnumerable<RaycastHit2D> hits = Physics2D
-            .CircleCastAll(origin, radius, Vector2.down, _castDistance, _groundLayer)
+            .CircleCastAll(origin, radius, Vector2.down, _onSurfaceCastDistance, _groundLayer)
             .Where(x => x.point.y < origin.y);
 
         Normal = GetBestNormal(hits.Select(x => x.normal));
