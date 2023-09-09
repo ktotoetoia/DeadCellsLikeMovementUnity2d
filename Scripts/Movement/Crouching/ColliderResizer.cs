@@ -22,7 +22,7 @@ public class CapsuleColliderResizer : MonoBehaviour
         set
         {
             resize = value;
-         
+
             if (resize)
             {
                 _collider.size = _modifiedSize;

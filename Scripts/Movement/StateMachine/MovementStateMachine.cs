@@ -15,7 +15,7 @@ public class MovementStateMachine
         }
         set
         {
-            if(!_currentMovement?.CanReplaceWith(value) ?? false)
+            if (!_currentMovement?.CanReplaceWith(value) ?? false)
             {
                 return;
             }
@@ -27,7 +27,7 @@ public class MovementStateMachine
             value.OnEnter();
         }
     }
-    
+
     public List<StateTransition> AnyStateTransitions { get; set; } = new List<StateTransition>();
 
     public MovementStateMachine(MovementBaseState mainMovement)
@@ -44,7 +44,7 @@ public class MovementStateMachine
 
     private void TryDoTransition(StateTransition transition)
     {
-        if(transition != default)
+        if (transition != default)
         {
             CurrentMovement = transition.To;
         }

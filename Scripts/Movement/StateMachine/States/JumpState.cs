@@ -20,6 +20,6 @@
             return;
         }
 
-        _jumped = !_canJump.TryJump();
+        _jumped = _canJump.TryJump();
     }
 }

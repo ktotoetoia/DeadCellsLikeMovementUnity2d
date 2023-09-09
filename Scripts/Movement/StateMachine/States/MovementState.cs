@@ -3,7 +3,7 @@ using System.Linq;
 
 public class MovementBaseState : State
 {
-    public List<StateTransition> Transitions { get; set; } = new List<StateTransition>();   
+    public List<StateTransition> Transitions { get; set; } = new List<StateTransition>();
     public bool IsOverridesMainMovement { get; protected set; }
 
     public StateTransition GetAvailableTransition()

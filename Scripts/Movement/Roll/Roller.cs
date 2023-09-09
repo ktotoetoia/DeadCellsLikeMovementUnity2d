@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Linq;
+﻿using System.Linq;
+using UnityEngine;
 
 public class Roller : MovementComponent, ICanRoll
 {
@@ -42,7 +42,7 @@ public class Roller : MovementComponent, ICanRoll
             {
                 _colliderResizer.Resize = true;
                 _firstFrame = false;
-                
+
                 return;
             }
 
@@ -70,7 +70,7 @@ public class Roller : MovementComponent, ICanRoll
 
     private void UpdateDirection()
     {
-        Vector2 normal = _slider.AllContacts.Select(x => x.normal).FirstOrDefault(x => !_slider.IsValidNormal(x));
+        Vector2 normal = _slider.AllContacts.Select(x => x.Normal).FirstOrDefault(x => !_slider.IsValidNormal(x));
 
         if (normal != default && !_colliderResizer.CanResizeToNormal)
         {

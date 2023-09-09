@@ -2,6 +2,8 @@
 
 public class VelocityJump : MovementComponent, ICanJump
 {
+    public event System.Action OnJumpPerformed;
+
     [SerializeField] private float _jumpForce;
 
     public bool TryJump()
@@ -18,9 +20,9 @@ public class VelocityJump : MovementComponent, ICanJump
 
     public void Jump()
     {
-        _slider.ResetNormal();
-
         _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, _jumpForce);
+
+        OnJumpPerformed?.Invoke();
     }
 
     public bool CanJump()

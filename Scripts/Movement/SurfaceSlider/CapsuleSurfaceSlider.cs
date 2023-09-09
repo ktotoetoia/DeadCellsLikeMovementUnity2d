@@ -1,36 +1,19 @@
-using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class CapsuleSurfaceSlider : MonoBehaviour, ISurfaceSlider
 {
-    public event System.Action<Vector2> OnNormalChanged;
+    public event System.Action OnNormalChanged;
 
+    [Range(0, 180)][SerializeField] private float _maxNormalDegrees = 50;
     [SerializeField] private LayerMask _groundLayer = 1 << 6;
-    [SerializeField] private float _maxNormalX = 0.8f;
     [SerializeField] private float _onSurfaceCastDistance = 0.1f;
     [SerializeField] private float _boundsNormalDetectionOffset;
     private CapsuleCollider2D _collider;
-    private Vector2 _normal;
 
-    public List<ContactPoint2D> AllContacts { get; private set; } = new List<ContactPoint2D>();
-    public Vector2 Normal
-    {
-        get
-        {
-            return _normal;
-        }
-        set
-        {
-            if (_normal != value)
-            {
-                _normal = value;
-
-                OnNormalChanged?.Invoke(_normal);
-            }
-        }
-    }
-    public bool IsOnSurface { get { return Normal != default; } }
+    public IEnumerable<PointInfo> AllContacts { get; private set; } = new List<PointInfo>();
+    public bool IsOnSurface { get { return AllContacts.Any(x => IsValidNormal(x.Normal)); } }
 
     private void Start()
     {
@@ -39,59 +22,61 @@ public class CapsuleSurfaceSlider : MonoBehaviour, ISurfaceSlider
 
     private void FixedUpdate()
     {
-        _collider.GetContacts(AllContacts);
-        UpdateNormal();
+        UpdateNormals();
     }
 
-    private void UpdateNormal()
+    private void UpdateNormals()
     {
         if (IsOnSurface)
         {
-            AtSurfaceCheck();
-
-            return;
+            UpdateOnSurface();
+        }
+        else
+        {
+            UpdateNotOnSurface();
         }
 
-        NotAtSurfaceCheck();
+        OnNormalChanged?.Invoke();
     }
 
-    private void AtSurfaceCheck()
+    private void UpdateOnSurface()
     {
-        float radius = _collider.size.x/2;
+        float radius = _collider.size.x / 2;
         Vector2 origin = new Vector3(_collider.bounds.center.x, _collider.bounds.min.y + radius);
         IEnumerable<RaycastHit2D> hits = Physics2D
-            .CircleCastAll(origin, radius, Vector2.down, _onSurfaceCastDistance, _groundLayer)
-            .Where(x => x.point.y < origin.y);
+            .CircleCastAll(origin, radius, Vector2.down, _onSurfaceCastDistance, _groundLayer);
 
-        Normal = GetBestNormal(hits.Select(x => x.normal));
+        AllContacts = hits.Select(x => new PointInfo(x.point, x.normal));
     }
 
-    private void NotAtSurfaceCheck()
+    private void UpdateNotOnSurface()
     {
-        Normal = GetBestNormal(AllContacts.Where(x =>
-    x.point.x > _collider.bounds.min.x + _boundsNormalDetectionOffset &&
-    x.point.x < _collider.bounds.max.x - _boundsNormalDetectionOffset).Select(x => x.normal));
-    }
+        List<ContactPoint2D> points = new List<ContactPoint2D>();
 
-    private Vector2 GetBestNormal(IEnumerable<Vector2> normals)
-    {
-        return normals.Where(normal => IsValidNormal(normal))
-            .OrderByDescending(normal => Mathf.Abs(normal.x))
-            .FirstOrDefault();
+        _collider.GetContacts(points);
+        AllContacts = points.Select(x => new PointInfo(x.point, x.normal));
     }
 
     public Vector2 Product(Vector2 direction)
     {
-        return direction - Vector2.Dot(direction, Normal) * Normal;
+        IEnumerable<PointInfo> points = AllContacts
+            .Where(x => IsValidNormal(x.Normal))
+            .OrderBy(x => transform.position.x.CompareTo(x.Position.x));
+
+        PointInfo point = direction.x < 0 ?
+            points.LastOrDefault() :
+            points.FirstOrDefault();
+
+        return direction - Vector2.Dot(direction, point.Normal) * point.Normal;
     }
 
     public bool IsValidNormal(Vector2 normal)
     {
-        return normal.y > 0 && Mathf.Abs(normal.x) < _maxNormalX;
+        return GetAbsoluteDegrees(normal) < _maxNormalDegrees;
     }
 
-    public void ResetNormal()
+    private float GetAbsoluteDegrees(Vector2 normal)
     {
-        Normal = default;
+        return Mathf.Atan2(Mathf.Abs(normal.x), Mathf.Abs(normal.y)) * Mathf.Rad2Deg;
     }
 }

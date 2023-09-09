@@ -13,7 +13,12 @@ public class SurfaceMaterialChanger : MonoBehaviour
         _collider = GetComponent<Collider2D>();
         _slider = GetComponent<ISurfaceSlider>();
 
-        _slider.OnNormalChanged += x => UpdatePhysicsMaterial();
+        _slider.OnNormalChanged += UpdatePhysicsMaterial;
+
+        if (TryGetComponent(out ICanJump canJump))
+        {
+            canJump.OnJumpPerformed += () => _collider.sharedMaterial = _inAirMaterial;
+        }
     }
 
     private void UpdatePhysicsMaterial()

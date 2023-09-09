@@ -3,11 +3,13 @@ using System;
 public interface ICanMove
 {
     void Move(float direction);
-    void MoveWithCustomSpeed(float direction,float speed);
+    void MoveWithCustomSpeed(float direction, float speed);
 }
 
 public interface ICanJump
 {
+    event Action OnJumpPerformed;
+
     bool CanJump();
     void Jump();
     bool TryJump();
@@ -21,8 +23,8 @@ public interface ICanCrouch
 
 public interface ICanRoll
 {
-    bool IsRolling { get;}
-    bool CanStopRolling { get;  }
+    bool IsRolling { get; }
+    bool CanStopRolling { get; }
 
     public void Roll(float direction);
     void StopRoll();

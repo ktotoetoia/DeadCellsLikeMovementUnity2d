@@ -5,12 +5,12 @@ public class StateTransition
     public Func<bool> Condition { get; set; }
     public MovementBaseState From { get; set; }
     public MovementBaseState To { get; set; }
-    public bool CanDoTransition 
+    public bool CanDoTransition
     {
         get
         {
             return Condition();
-        }      
+        }
     }
 
     public StateTransition(MovementBaseState from, MovementBaseState to) : this(from, to, () => true)
