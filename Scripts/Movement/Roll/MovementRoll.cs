@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using UnityEngine;
 
-public class Roller : MovementComponent, ICanRoll
+public class MovementRoll : MovementComponent, ICanRoll
 {
     [SerializeField] private AnimationCurve _rollingSpeedCurve;
     [SerializeField] private float _rollingTime;

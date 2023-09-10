@@ -15,11 +15,13 @@
 
     public override void OnFixedUpdate()
     {
-        if (_jumped)
-        {
-            return;
-        }
+        IsOverridesMainMovement = false;
 
-        _jumped = _canJump.TryJump();
+        if (!_jumped)
+        {
+            _jumped = _canJump.TryJump();
+
+            IsOverridesMainMovement = true;
+        }
     }
 }

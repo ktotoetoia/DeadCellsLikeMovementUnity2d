@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[DefaultExecutionOrder(-1)]
 [RequireComponent(typeof(CapsuleSurfaceSlider))]
 public class SurfaceMaterialChanger : MonoBehaviour
 {
@@ -13,12 +14,15 @@ public class SurfaceMaterialChanger : MonoBehaviour
         _collider = GetComponent<Collider2D>();
         _slider = GetComponent<ISurfaceSlider>();
 
-        _slider.OnNormalChanged += UpdatePhysicsMaterial;
-
         if (TryGetComponent(out ICanJump canJump))
         {
             canJump.OnJumpPerformed += () => _collider.sharedMaterial = _inAirMaterial;
         }
+    }
+
+    private void FixedUpdate()
+    {
+        UpdatePhysicsMaterial();
     }
 
     private void UpdatePhysicsMaterial()

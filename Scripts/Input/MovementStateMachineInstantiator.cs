@@ -1,5 +1,9 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(Crouch))]
+[RequireComponent(typeof(MovementRoll))]
+[RequireComponent (typeof(VelocityJump))]
+[RequireComponent(typeof(SurfaceMovement))]
 public class MovementStateMachineInstantiator : MonoBehaviour
 {
     private MovementStateMachine _stateMachine;

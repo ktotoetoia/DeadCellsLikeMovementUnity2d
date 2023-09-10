@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(CapsuleColliderResizer))]
-public class Crouching : MovementComponent, ICanCrouch
+public class Crouch : MovementComponent, ICanCrouch
 {
     [SerializeField] private float _fallSpeed;
     private CapsuleColliderResizer _colliderResizer;

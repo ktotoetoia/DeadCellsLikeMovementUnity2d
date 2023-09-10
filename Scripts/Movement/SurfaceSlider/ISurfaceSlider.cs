@@ -3,9 +3,7 @@ using UnityEngine;
 
 public interface ISurfaceSlider
 {
-    event System.Action OnNormalChanged;
-
-    IEnumerable<PointInfo> AllContacts { get; }
+    List<PointInfo> AllContacts { get; }
     bool IsOnSurface { get; }
 
     Vector2 Product(Vector2 direction);
